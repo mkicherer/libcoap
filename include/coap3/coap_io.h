@@ -51,6 +51,19 @@ typedef int coap_fd_t;
 #endif
 
 typedef uint16_t coap_socket_flags_t;
+#define COAP_SOCKET_EMPTY        0x0000  /**< the socket is not used */
+#define COAP_SOCKET_NOT_EMPTY    0x0001  /**< the socket is not empty */
+#define COAP_SOCKET_BOUND        0x0002  /**< the socket is bound */
+#define COAP_SOCKET_CONNECTED    0x0004  /**< the socket is connected */
+#define COAP_SOCKET_WANT_READ    0x0010  /**< non blocking socket is waiting for reading */
+#define COAP_SOCKET_WANT_WRITE   0x0020  /**< non blocking socket is waiting for writing */
+#define COAP_SOCKET_WANT_ACCEPT  0x0040  /**< non blocking server socket is waiting for accept */
+#define COAP_SOCKET_WANT_CONNECT 0x0080  /**< non blocking client socket is waiting for connect */
+#define COAP_SOCKET_CAN_READ     0x0100  /**< non blocking socket can now read without blocking */
+#define COAP_SOCKET_CAN_WRITE    0x0200  /**< non blocking socket can now write without blocking */
+#define COAP_SOCKET_CAN_ACCEPT   0x0400  /**< non blocking server socket can now accept without blocking */
+#define COAP_SOCKET_CAN_CONNECT  0x0800  /**< non blocking client socket can now connect without blocking */
+#define COAP_SOCKET_MULTICAST    0x1000  /**< socket is used for multicast communication */
 
 typedef struct coap_addr_tuple_t {
   coap_address_t remote;       /**< remote address and port */
