@@ -19,7 +19,10 @@ coap_io_do_io,
 coap_io_prepare_epoll,
 coap_io_do_epoll,
 coap_io_pending,
-coap_can_exit
+coap_can_exit,
+coap_socket_get_fd,
+coap_socket_get_flags,
+coap_socket_set_flags
 - Work with CoAP I/O to do the packet send and receives
 
 SYNOPSIS
@@ -49,6 +52,12 @@ size_t _nevents_)*;
 *int coap_io_pending(coap_context_t *_context_)*;
 
 *int coap_can_exit(coap_context_t *_context_)*;
+
+*coap_fd_t coap_socket_get_fd(coap_socket_t *socket);*
+
+*coap_socket_flags_t coap_socket_get_flags(coap_socket_t *socket);*
+
+*void coap_socket_set_flags(coap_socket_t *socket, coap_socket_flags_t flags);*
 
 For specific (D)TLS library support, link with
 *-lcoap-@LIBCOAP_API_VERSION@-notls*, *-lcoap-@LIBCOAP_API_VERSION@-gnutls*,
@@ -202,6 +211,22 @@ PDUs to transmit associated with _context_ and returns 1 if there is nothing
 outstanding else 0. This function does not check that all requests transmitted
 have been responded to.
 
+*Function: coap_socket_get_fd()*
+
+The *coap_socket_get_fd*() function obtains the file descriptor from the given
+socket. The file descriptor can be used to integrate libcoap in an external
+event loop instead of using one of its builtin event loops.
+
+*Function: coap_socket_get_flags()*
+
+The *coap_socket_get_flags*() function obtains the event flags from the
+given socket.
+
+*Function: coap_socket_set_flags()*
+
+The *coap_socket_set_flags*() function sets the event flags for the
+given socket.
+
 RETURN VALUES
 -------------
 *coap_io_process*() and *coap_io_process_with_fds*() return the time, in
@@ -218,6 +243,11 @@ milli-seconds that need to be waited before the function should next be called.
 
 *coap_can_exit*() returns 1 if there is nothing outstanding to transmit else
 returns 0.
+
+*coap_socket_get_fd*() returns the file descriptor or COAP_INVALID_SOCKET if
+the platform does not use file descriptors.
+
+*coap_socket_get_flags*() returns the OR-ed COAP_SOCKET* flags for this socket.
 
 EXAMPLES
 --------

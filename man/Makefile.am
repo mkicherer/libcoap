@@ -136,6 +136,9 @@ install-man: install-man3 install-man5 install-man7
 	@echo ".so man3/coap_deprecated.3" > coap_write.3
 	@echo ".so man3/coap_io.3" > coap_io_pending.3
 	@echo ".so man3/coap_io.3" > coap_can_exit.3
+	@echo ".so man3/coap_io.3" > coap_socket_get_fd.3
+	@echo ".so man3/coap_io.3" > coap_socket_get_flags.3
+	@echo ".so man3/coap_io.3" > coap_socket_set_flags.3
 	@echo ".so man3/coap_locking.3" > coap_lock_callback_ret_release.3
 	@echo ".so man3/coap_locking.3" > coap_lock_invert.3
 	@echo ".so man3/coap_logging.3" > coap_log_info.3

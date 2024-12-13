@@ -297,6 +297,9 @@ global:
   coap_set_show_pdu_output;
   coap_show_pdu;
   coap_show_tls_version;
+  coap_socket_get_fd;
+  coap_socket_get_flags;
+  coap_socket_set_flags;
   coap_socket_strerror;
   coap_split_path;
   coap_split_proxy_uri;

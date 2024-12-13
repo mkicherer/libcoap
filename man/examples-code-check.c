@@ -121,6 +121,8 @@ const char *pointer_list[] = {
 
 /* xxx function */
 const char *number_list[] = {
+  "coap_fd_t ",
+  "coap_socket_flags_t ",
   "coap_log_t ",
   "coap_pdu_type_t ",
   "coap_mid_t ",

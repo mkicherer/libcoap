@@ -833,6 +833,39 @@ struct epoll_event;
 COAP_API void coap_io_do_epoll(coap_context_t *ctx, struct epoll_event *events,
                                size_t nevents);
 
+/**
+ * Get the libcoap internal file descriptor for a socket. This can be used to
+ * integrate libcoap in an external event loop instead of using one of its
+ * builtin event loops.
+ *
+ * @param socket The CoAP socket
+ *
+ * @return The libcoap file descriptor or @c COAP_INVALID_SOCKET if the platform
+ *         is not using file descriptors.
+ */
+COAP_API coap_fd_t coap_socket_get_fd(coap_socket_t *socket);
+
+/**
+ * Get the libcoap internal flags for a socket. This can be used to
+ * integrate libcoap in an external event loop instead of using one of its
+ * builtin event loops.
+ *
+ * @param socket The CoAP socket
+ *
+ * @return the OR-ed COAP_SOCKET* flags for this socket
+ */
+COAP_API coap_socket_flags_t coap_socket_get_flags(coap_socket_t *socket);
+
+/**
+ * Set the libcoap internal flags for a socket. This can be used to
+ * integrate libcoap in an external event loop instead of using one of its
+ * builtin event loops.
+ *
+ * @param socket The CoAP socket
+ * @param flags The new flags for this socket
+ */
+COAP_API void coap_socket_set_flags(coap_socket_t *socket, coap_socket_flags_t flags);
+
 /**@}*/
 
 #if defined(WITH_LWIP) || defined(WITH_LWIP_MAN_CHECK) || defined(__DOXYGEN__)
