@@ -222,7 +222,12 @@ struct coap_context_t {
   coap_resource_dynamic_create_t dyn_create_handler; /**< Dynamc resource create handler */
   uint32_t dynamic_cur;            /* Current number of dynamic resources */
   uint32_t dynamic_max;            /* Max number of dynamic resources or 0 is unlimited */
+  
+  coap_block_data_handler_t block_data_handler;
 };
+
+void coap_register_block_data_handler(coap_resource_t *resource,
+                                      coap_block_data_handler_t handler);
 
 /**
  * Adds @p node to given @p queue, ordered by variable t in @p node.

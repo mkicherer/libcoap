@@ -3244,7 +3244,8 @@ coap_handle_request_put_block(coap_context_t *context,
     if (lg_srcv->total_len < saved_offset + length) {
       lg_srcv->total_len = saved_offset + length;
     }
-    lg_srcv->body_data = coap_block_build_body(lg_srcv->body_data, length, data,
+    lg_srcv->body_data = coap_block_build_body(context, session, pdu, resource,
+                                               lg_srcv->body_data, length, data,
                                                saved_offset, lg_srcv->total_len);
     if (!lg_srcv->body_data) {
       coap_add_data(response, sizeof("Memory issue")-1,
@@ -3834,14 +3835,35 @@ lg_xmit_finished:
 }
 #endif /* COAP_CLIENT_SUPPORT */
 
+void coap_register_block_data_handler(coap_resource_t *resource,
+                                      coap_block_data_handler_t block_data_handler)
+{
+  resource->block_data_handler = block_data_handler;
+}
+
 /*
  * Re-assemble payloads into a body
  */
 coap_binary_t *
-coap_block_build_body(coap_binary_t *body_data, size_t length,
-                      const uint8_t *data, size_t offset, size_t total) {
+coap_block_build_body(coap_context_t *context,
+                      coap_session_t *session,
+                      coap_pdu_t *pdu,
+                      coap_resource_t *resource,
+                      coap_binary_t *body_data,
+                      size_t length,
+                      const uint8_t *data,
+                      size_t offset,
+                      size_t total)
+{
   if (data == NULL)
     return NULL;
+  if (resource && resource->block_data_handler) {
+    body_data = resource->block_data_handler(session, pdu, resource, body_data,
+                                             length, data, offset, total);
+    if (!body_data)
+      body_data = coap_new_binary(0);
+    return body_data;
+  }
   if (body_data == NULL && total) {
     body_data = coap_new_binary(total);
   }
@@ -4121,8 +4143,10 @@ reinit:
             if (size2 < saved_offset + length) {
               size2 = saved_offset + length;
             }
-            lg_crcv->body_data = coap_block_build_body(lg_crcv->body_data, length, data,
-                                                       saved_offset, size2);
+            lg_crcv->body_data = coap_block_build_body(context, session, rcvd,
+                                                       0, lg_crcv->body_data,
+                                                       length, data, saved_offset,
+                                                       size2);
             if (lg_crcv->body_data == NULL) {
               goto fail_resp;
             }

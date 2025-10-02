@@ -605,8 +605,10 @@ hnd_put_example_data(coap_resource_t *resource,
     if (size) {
       /* Add in the new data to cache entry */
       data_so_far = coap_cache_get_app_data(cache_entry);
-      data_so_far = coap_block_build_body(data_so_far, size, data,
-                                          offset, total);
+      data_so_far = coap_block_build_body(coap_session_get_context(session),
+                                          session, request, resource,
+                                          data_so_far, size, data, offset,
+                                          total);
       /* Yes, data_so_far can be NULL if error */
       coap_cache_set_app_data2(cache_entry, data_so_far, cache_free_app_data);
     }

@@ -110,6 +110,15 @@ typedef void (*coap_pong_handler_t)(coap_session_t *session,
                                     const coap_pdu_t *received,
                                     const coap_mid_t mid);
 
+typedef coap_binary_t * (*coap_block_data_handler_t)(coap_session_t *session,
+                                                     coap_pdu_t *pdu,
+                                                     coap_resource_t *resource,
+                                                     coap_binary_t *body_data,
+                                                     size_t length,
+                                                     const uint8_t *data,
+                                                     size_t offset,
+                                                     size_t total);
+
 /**
  * Definition of resource dynamic creation handler function
  *
@@ -161,6 +170,9 @@ void coap_register_ping_handler(coap_context_t *context,
  */
 void coap_register_pong_handler(coap_context_t *context,
                                 coap_pong_handler_t handler);
+
+void coap_register_block_data_handler(coap_resource_t *resource,
+                                      coap_block_data_handler_t handler);
 
 /**
  * Sets up a handler for calling when an unknown resource is requested.
