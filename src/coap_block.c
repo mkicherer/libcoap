@@ -3244,13 +3244,23 @@ coap_handle_request_put_block(coap_context_t *context,
     if (lg_srcv->total_len < saved_offset + length) {
       lg_srcv->total_len = saved_offset + length;
     }
-    lg_srcv->body_data = coap_block_build_body(lg_srcv->body_data, length, data,
-                                               saved_offset, lg_srcv->total_len);
-    if (!lg_srcv->body_data) {
-      coap_add_data(response, sizeof("Memory issue")-1,
-                    (const uint8_t *)"Memory issue");
-      response->code = COAP_RESPONSE_CODE(500);
-      goto skip_app_handler;
+    if (resource && resource->block_data_handler) {
+      coap_pdu_code_t resp_code;
+      resp_code = resource->block_data_handler(session, pdu, resource, length,
+                                               data, saved_offset, lg_srcv->total_len);
+      if (resp_code != COAP_EMPTY_CODE) {
+        response->code = resp_code;
+        goto skip_app_handler;
+      }
+    } else {
+      lg_srcv->body_data = coap_block_build_body(lg_srcv->body_data, length, data,
+                                                 saved_offset, lg_srcv->total_len);
+      if (!lg_srcv->body_data) {
+        coap_add_data(response, sizeof("Memory issue")-1,
+                      (const uint8_t *)"Memory issue");
+        response->code = COAP_RESPONSE_CODE(500);
+        goto skip_app_handler;
+      }
     }
   }
 
@@ -3833,6 +3843,12 @@ lg_xmit_finished:
   return 0;
 }
 #endif /* COAP_CLIENT_SUPPORT */
+
+void coap_register_block_data_handler(coap_resource_t *resource,
+                                      coap_block_data_handler_t block_data_handler)
+{
+  resource->block_data_handler = block_data_handler;
+}
 
 /*
  * Re-assemble payloads into a body

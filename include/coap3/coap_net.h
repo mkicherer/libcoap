@@ -120,6 +120,15 @@ typedef void (*coap_pong_handler_t)(coap_session_t *session,
  */
 typedef coap_resource_t *(*coap_resource_dynamic_create_t)(coap_session_t *session,
                                                            const coap_pdu_t *request);
+
+typedef coap_pdu_code_t (*coap_block_data_handler_t)(coap_session_t *session,
+                                                     coap_pdu_t *pdu,
+                                                     coap_resource_t *resource,
+                                                     size_t length,
+                                                     const uint8_t *data,
+                                                     size_t offset,
+                                                     size_t total);
+
 /**
  * Registers a new message handler that is called whenever a response is
  * received.
@@ -179,6 +188,9 @@ void coap_register_pong_handler(coap_context_t *context,
 void coap_register_dynamic_resource_handler(coap_context_t *context,
                                             coap_resource_dynamic_create_t create_handler,
                                             uint32_t dynamic_max);
+
+void coap_register_block_data_handler(coap_resource_t *resource,
+                                      coap_block_data_handler_t handler);
 
 /**
  * Registers the option number @p number with the given context object @p context.

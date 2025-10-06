@@ -117,6 +117,7 @@ struct coap_resource_t {
    */
   void *user_data;
 
+  coap_block_data_handler_t block_data_handler;
 };
 
 /**
