@@ -3615,15 +3615,26 @@ coap_handle_request_put_block(coap_context_t *context,
   saved_offset = offset;
 
   while (offset < saved_offset + length) {
+    uint32_t block_m = block.m;
+
+    /*
+     * A BERT payload contains multiple logical 1024-byte blocks, but its
+     * Block1 M bit describes the complete BERT payload.  Mark intermediate
+     * logical blocks as having more data so total_blocks is only set by the
+     * final logical block.
+     */
+    if (block.bert && offset + 1024 < saved_offset + length)
+      block_m = 1;
     if (!check_if_received_block(&lg_srcv->rec_blocks, block.num)) {
       /* Update list of blocks received */
-      if (blocks_add_entry(&lg_srcv->rec_blocks, block.num, block.m)) {
+      if (blocks_add_entry(&lg_srcv->rec_blocks, block.num, block_m)) {
         update_data = 1;
       } else {
         coap_ticks(&lg_srcv->rec_blocks.last_seen);
         coap_log_debug("Block nr %u ignored (too many missing blocks)\n", block.num);
 #if COAP_Q_BLOCK_SUPPORT
-        request_missing = 1;
+        if (block_option == COAP_OPTION_Q_BLOCK1)
+          request_missing = 1;
 #endif /* COAP_Q_BLOCK_SUPPORT */
       }
     } else {
